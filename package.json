@@ -1,0 +1,20 @@
+{
+  "name": "mistral-vibe-opencode",
+  "version": "1.0.0",
+  "description": "Mistral Vibe for opencode: Vibe-allowance billing, provider block, /vibe-quota",
+  "type": "module",
+  "license": "MIT",
+  "keywords": ["opencode-plugin", "mistral", "vibe", "openai-compatible"],
+  "homepage": "https://github.com/dumbzombies/mistral-vibe-opencode",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dumbzombies/mistral-vibe-opencode.git"
+  },
+  "files": ["plugins", "commands", "bin"],
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "test": "bun test"
+  }
+}
