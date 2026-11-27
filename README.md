@@ -16,17 +16,24 @@ clamps `reasoning_effort` per model, strips replayed reasoning, and ASCII-escape
 ## Install
 
 ```bash
+curl -fsSL https://raw.githubusercontent.com/dumbzombies/mistral-vibe-opencode/main/install.sh | bash
+```
+
+Or from a clone, which installs your local files rather than fetching:
+
+```bash
 git clone https://github.com/dumbzombies/mistral-vibe-opencode
 cd mistral-vibe-opencode
 ./install.sh
 ```
 
-That copies the plugin into `~/.config/opencode/plugins/`, merges the provider block into
+That puts the plugin into `~/.config/opencode/plugins/`, merges the provider block into
 `opencode.jsonc`, and puts `vibe-quota` on `PATH`. A re-run is idempotent and backs up every
 file it overwrites to `*.bak-vibe2api`. `./install.sh --dry-run` prints the plan and writes
 nothing.
 
 `OPENCODE_CONFIG_DIR` and `VIBE2API_BIN` override the two destinations.
+`MISTRAL_VIBE_OC_REPO` points the curl path at a fork or a pinned copy.
 
 ## First run
 
