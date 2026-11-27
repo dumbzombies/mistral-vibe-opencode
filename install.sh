@@ -6,7 +6,7 @@
 #   3. /vibe-quota command + the quota script on PATH
 #
 #   ./install.sh                      # from a clone, into ~/.config/opencode
-#   curl -fsSL https://raw.githubusercontent.com/dumbzombies/mistral-vibe-opencode/master/install.sh | bash
+#   curl -fsSL https://raw.githubusercontent.com/dumbzombies/mistral-vibe-opencode/main/install.sh | bash
 #   OPENCODE_CONFIG_DIR=… ./install.sh
 #   VIBE2API_BIN=… ./install.sh       # where vibe-quota lands
 #   MISTRAL_VIBE_OC_REPO=…            # fetch another source (fork, pin)
