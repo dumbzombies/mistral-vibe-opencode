@@ -1,16 +1,24 @@
 #!/usr/bin/env bash
-# Install the Mistral Vibe provider + /vibe-quota into opencode from this repo.
+# Install the Mistral Vibe provider + /vibe-quota into opencode.
 #   1. plugin file into <config>/plugins/. It starts its own loopback server on
 #      127.0.0.1:8810 when opencode loads it, so no proxy or Worker is needed.
 #   2. provider block merged into <config>/opencode.jsonc
 #   3. /vibe-quota command + the quota script on PATH
 #
-#   ./install.sh                      # ~/.config/opencode
+#   ./install.sh                      # from a clone, into ~/.config/opencode
+#   curl -fsSL https://raw.githubusercontent.com/dumbzombies/mistral-vibe-opencode/master/install.sh | bash
 #   OPENCODE_CONFIG_DIR=… ./install.sh
 #   VIBE2API_BIN=… ./install.sh       # where vibe-quota lands
+#   MISTRAL_VIBE_OC_REPO=…            # fetch another source (fork, pin)
 #   ./install.sh --dry-run            # print the plan, write nothing
 set -eu
-here="$(cd "$(dirname "$0")" && pwd)"
+self="${BASH_SOURCE[0]:-}"
+if [ -n "$self" ] && [ -f "$self" ]; then
+  here="$(cd "$(dirname "$self")" && pwd)"
+else
+  here=""   # piped: everything is fetched below
+fi
+repo="${MISTRAL_VIBE_OC_REPO:-https://github.com/dumbzombies/mistral-vibe-opencode}"
 cfg="${OPENCODE_CONFIG_DIR:-${XDG_CONFIG_HOME:-$HOME/.config}/opencode}"
 bin="${VIBE2API_BIN:-${VIBE_QUOTA_BIN:-$HOME/.local/bin}}"
 DRY=0
@@ -40,13 +48,29 @@ install_file() {
 
 [ -d "$cfg" ] || die "opencode config dir not found: $cfg (create it, or set OPENCODE_CONFIG_DIR)"
 
+# `curl | bash` has no checkout beside it, so fetch one. A clone uses its own
+# files, which keeps a local edit installable without a push.
+cleanup=""
+stage="$here"
+if [ -z "$stage" ] || [ ! -f "$stage/plugins/mistral-vibe.ts" ]; then
+  stage="$(mktemp -d)"
+  cleanup="$stage"
+  if [ "$DRY" = 1 ]; then
+    note "would fetch $repo into $stage"
+  else
+    git clone --depth 1 "$repo" "$stage/repo" >/dev/null 2>&1 || die "could not fetch $repo"
+    stage="$stage/repo"
+  fi
+fi
+trap '[ -n "$cleanup" ] && rm -rf "$cleanup"' EXIT
+
 step "plugin -> $cfg/plugins"
-install_file "$here/plugins/mistral-vibe.ts" "$cfg/plugins/mistral-vibe.ts"
+install_file "$stage/plugins/mistral-vibe.ts" "$cfg/plugins/mistral-vibe.ts"
 ok "$cfg/plugins/mistral-vibe.ts"
 
 step "command -> $cfg/command"
-install_file "$here/commands/vibe-quota.md" "$cfg/command/vibe-quota.md"
-install_file "$here/bin/vibe-quota.sh" "$bin/vibe-quota"
+install_file "$stage/commands/vibe-quota.md" "$cfg/command/vibe-quota.md"
+install_file "$stage/bin/vibe-quota.sh" "$bin/vibe-quota"
 [ "$DRY" = 1 ] || chmod +x "$bin/vibe-quota"
 ok "$bin/vibe-quota"
 
