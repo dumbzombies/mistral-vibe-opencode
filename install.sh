@@ -82,7 +82,7 @@ fi
 if [ "$DRY" = 1 ]; then
   note "would merge provider.mistral-vibe into $conf"
 else
-  python3 - "$conf" "$here/opencode.jsonc.example" <<'PY'
+  python3 - "$conf" "$stage/opencode.jsonc.example" <<'PY'
 import json, shutil, sys
 conf, example = sys.argv[1], sys.argv[2]
 with open(conf) as f:
